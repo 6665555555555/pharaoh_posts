@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابتي - My Portal</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts for premium typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="background-globes">
+        <div class="globe globe-1"></div>
+        <div class="globe globe-2"></div>
+        <div class="globe globe-3"></div>
+    </div>
+
+    <div class="app-container">
+
+        <!-- Sidebar / Navigation -->
+        <aside class="sidebar glass-panel">
+            <div class="logo">
+                <i class="fa-solid fa-cube"></i>
+                <h1>بوابتي</h1>
+            </div>
+
+            <!-- User Profile (Hidden by default) -->
+            <div id="user-profile" class="user-profile glass-panel"
+                style="display: none; padding: 15px; margin-bottom: 20px; align-items: center; gap: 10px;">
+                <div class="user-avatar"
+                    style="width: 40px; height: 40px; background: var(--accent-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                    U</div>
+                <div class="user-info">
+                    <h4 id="user-email" style="font-size: 0.9rem; word-break: break-all;">user@email.com</h4>
+                    <button id="logout-btn"
+                        style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.8rem; margin-top: 5px;">تسجيل
+                        خروج</button>
+                </div>
+            </div>
+
+            <nav class="nav-links">
+                <a href="#" class="active"><i class="fa-solid fa-house"></i> الرئيسية</a>
+                <a href="#"><i class="fa-solid fa-compass"></i> استكشاف</a>
+                <a href="#" id="nav-scheduled"><i class="fa-regular fa-calendar-check"></i> المجدولة</a>
+                <a href="#"><i class="fa-solid fa-bookmark"></i> المحفوظات</a>
+            </nav>
+
+            <div class="social-hub">
+                <h3>تواصل معي</h3>
+                <div class="social-icons">
+                    <a href="#" class="social-link instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="social-link tiktok"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="#" class="social-link youtube"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="#" class="social-link twitter"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="#" class="social-link linkedin"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="#" class="social-link snapchat"><i class="fa-brands fa-snapchat"></i></a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+
+            <header class="top-bar glass-panel">
+                <div class="search-bar">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="ابحث عن مقالات، صور، ملفات...">
+                </div>
+                <button id="open-upload-modal" class="btn-primary">
+                    <i class="fa-solid fa-plus"></i> مشاركة جديدة
+                </button>
+            </header>
+
+            <div id="feed-container" class="feed-grid">
+                <!-- Content will be injected here via JS -->
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- Upload Modal -->
+    <div id="upload-modal" class="modal-overlay hidden">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h2>إضافة محتوى جديد</h2>
+                <button id="close-modal" class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="article">مقال</button>
+                    <button class="tab-btn" data-tab="image">صورة</button>
+                    <button class="tab-btn" data-tab="file">ملف</button>
+                </div>
+
+                <form id="upload-form">
+                    <div class="form-group" style="position: relative;">
+                        <label>العنوان</label>
+                        <input type="text" id="post-title" placeholder="أدخل عنواناً مميزاً..." required>
+                        <button type="button" id="idea-btn"
+                            style="position: absolute; left: 0; top: 0; background: none; border: none; color: var(--accent-glow); cursor: pointer; font-size: 0.9rem;">
+                            <i class="fa-regular fa-lightbulb"></i> اقترح فكرة
+                        </button>
+                    </div>
+
+                    <div class="form-group" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <label style="width: 100%;">اختر التصميم:</label>
+                        <div class="design-option active" data-style="classic">Classic</div>
+                        <div class="design-option" data-style="modern">Modern</div>
+                        <div class="design-option" data-style="neon">Neon</div>
+                        <div class="design-option" data-style="quote">Quote</div>
+                        <input type="hidden" id="post-style" value="classic">
+                    </div>
+
+                    <div class="form-group"
+                        style="display: flex; gap: 10px; align-items: center; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
+                        <label style="margin:0;"><i class="fa-regular fa-clock"></i> وقت النشر:</label>
+                        <input type="datetime-local" id="schedule-input"
+                            style="width: auto; flex-grow: 1; background: #0f172a; border: 1px solid rgba(255,255,255,0.1); color: white; padding: 5px; border-radius: 4px;">
+                    </div>
+
+                    <div class="form-group"
+                        style="display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
+                        <input type="checkbox" id="post-private" style="width: 20px; height: 20px;">
+                        <label for="post-private" style="margin: 0; cursor: pointer;">
+                            <i class="fa-solid fa-lock"></i> منشور خاص (لا يراه إلا أنت)
+                        </label>
+                    </div>
+
+                    <!-- Social Media Auto-Publish Selection -->
+                    <div class="form-group" style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
+                        <label style="margin-bottom: 10px; display: block;">نشر تلقائي أيضاً على:</label>
+                        <div class="social-select-grid" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <label class="social-checkbox"
+                                style="cursor: pointer; display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); padding: 8px 12px; border-radius: 20px; border: 1px solid transparent; transition: 0.3s;">
+                                <input type="checkbox" name="social_platform" value="twitter" hidden>
+                                <i class="fa-brands fa-x-twitter"></i> Twitter
+                            </label>
+                            <label class="social-checkbox"
+                                style="cursor: pointer; display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); padding: 8px 12px; border-radius: 20px; border: 1px solid transparent; transition: 0.3s;">
+                                <input type="checkbox" name="social_platform" value="facebook" hidden>
+                                <i class="fa-brands fa-facebook"></i> Facebook
+                            </label>
+                            <label class="social-checkbox"
+                                style="cursor: pointer; display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); padding: 8px 12px; border-radius: 20px; border: 1px solid transparent; transition: 0.3s;">
+                                <input type="checkbox" name="social_platform" value="instagram" hidden>
+                                <i class="fa-brands fa-instagram"></i> Instagram
+                            </label>
+                            <label class="social-checkbox"
+                                style="cursor: pointer; display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); padding: 8px 12px; border-radius: 20px; border: 1px solid transparent; transition: 0.3s;">
+                                <input type="checkbox" name="social_platform" value="linkedin" hidden>
+                                <i class="fa-brands fa-linkedin-in"></i> LinkedIn
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Article Section -->
+                    <div class="tab-content active" id="article-section">
+                        <label>المحتوى</label>
+                        <textarea id="post-content" rows="6" placeholder="بماذا تفكر؟"></textarea>
+                    </div>
+
+                    <!-- Image Section -->
+                    <div class="tab-content" id="image-section">
+                        <div class="file-drop-area" id="image-drop-area">
+                            <i class="fa-regular fa-image"></i>
+                            <p>اسحب الصورة هنا أو اضغط للرفع</p>
+                            <input type="file" id="image-input" accept="image/*" hidden>
+                            <div id="image-preview"></div>
+                        </div>
+                    </div>
+
+                    <!-- File Section -->
+                    <div class="tab-content" id="file-section">
+                        <div class="file-drop-area" id="file-drop-area">
+                            <i class="fa-solid fa-file-arrow-up"></i>
+                            <p>اختر ملفاً للرفع (PDF, Docx, etc)</p>
+                            <input type="file" id="file-input" hidden>
+                            <div id="file-preview"></div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary btn-block">نشر</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script>
+
+    <!-- Firebase Config -->
+    <script src="firebase-config.js"></script>
+
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal-overlay active"> <!-- Active by default to force login/signup -->
+        <div class="modal-content glass-panel" style="max-width: 400px; text-align: center;">
+            <div class="modal-header">
+                <h2 id="auth-title">تسجيل الدخول</h2>
+            </div>
+            <div class="modal-body">
+                <form id="auth-form">
+                    <div class="form-group">
+                        <label>البريد الإلكتروني</label>
+                        <input type="email" id="auth-email" placeholder="example@mail.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>كلمة المرور</label>
+                        <input type="password" id="auth-password" placeholder="********" required>
+                    </div>
+                    <button type="submit" class="btn-primary btn-block" id="auth-submit-btn">دخول</button>
+                </form>
+                <div class="auth-toggle">
+                    <p id="auth-toggle-text">ليس لديك حساب؟ <span id="toggle-auth-mode"
+                            style="color: var(--accent-glow); cursor: pointer; font-weight: bold;">إنشاء حساب
+                            جديد</span></p>
+                </div>
+                <div id="auth-error" style="color: #ef4444; margin-top: 10px; display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="modal-overlay" style="z-index: 2000;">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container"
+        style="position: fixed; bottom: 20px; right: 20px; z-index: 3000; display: flex; flex-direction: column; gap: 10px;">
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
