@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--
   ╔══════════════════════════════════════════════════════════════╗
   ║   بوابتي — Content Portal                                    ║
@@ -15,10 +15,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="بوابتي — منصة لمشاركة المحتوى بأسلوب عصري واحترافي">
     <meta name="theme-color" content="#0f172a">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Bawabaty Dev Team">
+
+    <!-- Open Graph (Facebook / WhatsApp / LinkedIn) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="بوابتي — My Portal">
+    <meta property="og:description" content="منصة لمشاركة المحتوى بأسلوب عصري واحترافي">
+    <meta property="og:locale" content="ar_AR">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="بوابتي — My Portal">
+    <meta name="twitter:description" content="منصة لمشاركة المحتوى بأسلوب عصري واحترافي">
+
     <title>بوابتي — My Portal</title>
+
+    <!-- Favicon placeholder (replace with your actual icon) -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚪</text></svg>">
 
     <!-- ─── Stylesheet ─────────────────────────────────────────── -->
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="auth-style.css">
 
     <!-- ─── Google Fonts: Tajawal (Arabic-optimized) ─────────── -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -56,7 +75,8 @@
          Sticky side panel with logo, user info, nav links,
          and social media shortcuts.
          ════════════════════════════════════════════════════════ -->
-        <aside id="sidebar" class="sidebar glass-panel" role="navigation" aria-label="القائمة الرئيسية">
+        <!-- Using div+nav rather than aside+role=navigation to avoid duplicate landmark -->
+        <div id="sidebar" class="sidebar glass-panel">
 
             <!-- Close button — mobile only -->
             <button id="sidebar-close-btn" class="sidebar-close-btn" aria-label="إغلاق القائمة">
@@ -93,19 +113,35 @@
 
             <!-- Primary Navigation Links -->
             <nav class="nav-links" aria-label="التنقل">
-                <a href="#" class="active" aria-current="page">
+                <a href="#" class="active" data-view="feed" aria-current="page">
                     <i class="fa-solid fa-house" aria-hidden="true"></i> الرئيسية
                 </a>
-                <a href="#">
+                <a href="#" data-view="feed">
                     <i class="fa-solid fa-compass" aria-hidden="true"></i> استكشاف
                 </a>
-                <a href="#" id="nav-scheduled">
+                <a href="#" id="nav-scheduled" data-view="scheduled">
                     <i class="fa-regular fa-calendar-check" aria-hidden="true"></i> المجدولة
                 </a>
-                <a href="#">
+                <a href="#" data-view="saved">
                     <i class="fa-solid fa-bookmark" aria-hidden="true"></i> المحفوظات
                 </a>
             </nav>
+
+            <!-- Sidebar Stats -->
+            <div class="sidebar-stats" id="sidebar-stats" aria-label="إحصائيات المحتوى">
+                <div class="stat-chip">
+                    <span class="stat-num" id="stat-published">0</span>
+                    <span class="stat-lbl">منشور</span>
+                </div>
+                <div class="stat-chip">
+                    <span class="stat-num" id="stat-drafts">0</span>
+                    <span class="stat-lbl">مسودة</span>
+                </div>
+                <div class="stat-chip">
+                    <span class="stat-num" id="stat-scheduled">0</span>
+                    <span class="stat-lbl">مجدول</span>
+                </div>
+            </div>
 
             <!-- Social Media Hub -->
             <div class="social-hub">
@@ -132,7 +168,7 @@
                 </div>
             </div>
 
-        </aside><!-- /sidebar -->
+        </div><!-- /sidebar -->
 
 
         <!-- ════════════════════════════════════════════════════════
@@ -177,12 +213,38 @@
 
             <!-- ── Content Feed (populated by JS) ─────────────────── -->
             <div id="feed-container" class="feed-grid" role="feed" aria-label="آخر المنشورات">
-                <!-- Post cards are injected here by PostService -->
+                <!-- Skeleton loading cards shown while data loads -->
+                <div class="skeleton-card" id="sk1">
+                    <div class="skeleton skeleton-title"></div>
+                    <div class="skeleton skeleton-img"></div>
+                    <div class="skeleton skeleton-line"></div>
+                    <div class="skeleton skeleton-line short"></div>
+                    <div class="skeleton skeleton-footer"></div>
+                </div>
+                <div class="skeleton-card" id="sk2">
+                    <div class="skeleton skeleton-title"></div>
+                    <div class="skeleton skeleton-line"></div>
+                    <div class="skeleton skeleton-line short"></div>
+                    <div class="skeleton skeleton-footer"></div>
+                </div>
+                <div class="skeleton-card" id="sk3">
+                    <div class="skeleton skeleton-title"></div>
+                    <div class="skeleton skeleton-img"></div>
+                    <div class="skeleton skeleton-line"></div>
+                    <div class="skeleton skeleton-footer"></div>
+                </div>
             </div>
 
         </main><!-- /main-content -->
 
     </div><!-- /app-container -->
+
+    <!-- ════════════════════════════════════════════════════════════
+       SCROLL TO TOP BUTTON
+       ════════════════════════════════════════════════════════════ -->
+    <button id="scroll-top-btn" aria-label="العودة للأعلى" title="العودة للأعلى">
+        <i class="fa-solid fa-chevron-up"></i>
+    </button>
 
 
     <!-- ════════════════════════════════════════════════════════════
@@ -300,18 +362,19 @@
                                 <p class="drop-zone-text">اسحب صورة أو ملفاً هنا</p>
                                 <p class="drop-zone-hint">PNG، JPG، PDF، MP4 — حتى 50 MB</p>
                                 <div class="drop-zone-actions">
-                                    <!-- Image picker trigger -->
-                                    <button type="button" class="action-chip"
-                                        onclick="document.getElementById('image-input').click()">
-                                        <i class="fa-regular fa-image"></i> صورة
-                                        <input type="file" id="image-input" accept="image/*" hidden aria-hidden="true">
-                                    </button>
+                                    <!-- Image picker trigger — label wraps hidden input (valid HTML) -->
+                                    <label class="action-chip" for="image-input" role="button" tabindex="0"
+                                        aria-label="اختيار صورة">
+                                        <i class="fa-regular fa-image" aria-hidden="true"></i> صورة
+                                    </label>
+                                    <input type="file" id="image-input" accept="image/*" hidden aria-hidden="true">
+
                                     <!-- Generic file picker trigger -->
-                                    <button type="button" class="action-chip"
-                                        onclick="document.getElementById('file-input').click()">
-                                        <i class="fa-solid fa-paperclip"></i> ملف
-                                        <input type="file" id="file-input" hidden aria-hidden="true">
-                                    </button>
+                                    <label class="action-chip" for="file-input" role="button" tabindex="0"
+                                        aria-label="اختيار ملف">
+                                        <i class="fa-solid fa-paperclip" aria-hidden="true"></i> ملف
+                                    </label>
+                                    <input type="file" id="file-input" hidden aria-hidden="true">
                                 </div>
                             </div>
 
@@ -570,246 +633,92 @@
     </div><!-- /upload-modal -->
 
 
-    <!-- ════════════════════════════════════════════════════════════
-       AUTH SCREEN — Fullscreen centered card
-       Two faces toggled with a 3-D flip animation:
-         • .auth-card__front  — Login  (email / phone / guest)
-         • .auth-card__back   — Signup (name, email, password)
-       ════════════════════════════════════════════════════════════ -->
-    <div id="auth-modal" class="auth-screen active" role="dialog" aria-modal="true" aria-labelledby="auth-title-login">
+    <!-- ════════════════════════════════════════════════════════════════════
+       🔐 AUTH v4 — PREMIUM 3-VIEW AUTH SYSTEM
+       Modern Clean UI - Glassmorphism
+    ════════════════════════════════════════════════════════════════════ -->
+    <div id="auth-modal" class="auth-overlay" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+        <div class="auth-container">
+            <button id="auth-close-btn" class="sidebar-close-btn" style="position:absolute; top:1rem; left:1rem; background:none; border:none; color:#fff; font-size:1.2rem; cursor:pointer;">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
 
-        <!-- ── Animated background orbs (decorative) ──────────── -->
-        <div class="auth-bg-orbs" aria-hidden="true">
-            <span class="auth-orb o1"></span>
-            <span class="auth-orb o2"></span>
-            <span class="auth-orb o3"></span>
+            <!-- Tabs -->
+            <div class="auth-tabs" role="tablist">
+                <button class="auth-tab active" id="tab-login" onclick="AuthUI.switch('login')">تسجيل الدخول</button>
+                <button class="auth-tab" id="tab-signup" onclick="AuthUI.switch('signup')">إنشاء حساب</button>
+            </div>
+
+            <div class="auth-forms-wrapper">
+                <!-- Login Form -->
+                <form id="login-form" class="auth-form active" novalidate>
+                    <div class="input-group">
+                        <label class="input-label" for="login-email">البريد الإلكتروني</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-envelope input-icon"></i>
+                            <input type="email" id="login-email" class="input-field" placeholder="name@example.com" required>
+                        </div>
+                        <div class="validation-msg" id="msg-login-email"></div>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label" for="login-password">كلمة المرور</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-lock input-icon"></i>
+                            <input type="password" id="login-password" class="input-field" placeholder="••••••••" required>
+                            <button type="button" class="toggle-password" onclick="AuthUI.togglePw('login-password')">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="validation-msg" id="msg-login-password"></div>
+                    </div>
+
+                    <button type="submit" class="submit-btn">دخول</button>
+                    
+                    <div style="text-align:center; margin-top:1rem;">
+                        <button type="button" class="av4-ghost-btn" onclick="AuthService.guestLogin()" style="color:var(--auth-text-muted); background:none; border:none; cursor:pointer;">
+                            تصفح كزائر
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Signup Form -->
+                <form id="signup-form" class="auth-form" novalidate>
+                    <div class="input-group">
+                        <label class="input-label" for="signup-email">البريد الإلكتروني</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-envelope input-icon"></i>
+                            <input type="email" id="signup-email" class="input-field" placeholder="name@example.com" required>
+                        </div>
+                        <div class="validation-msg" id="msg-signup-email"></div>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label" for="signup-password">كلمة المرور</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-lock input-icon"></i>
+                            <input type="password" id="signup-password" class="input-field" placeholder="8+ أحرف" required>
+                            <button type="button" class="toggle-password" onclick="AuthUI.togglePw('signup-password')">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="validation-msg" id="msg-signup-password"></div>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label" for="signup-confirm">تأكيد كلمة المرور</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-shield-halved input-icon"></i>
+                            <input type="password" id="signup-confirm" class="input-field" placeholder="تطابق كلمة المرور" required>
+                        </div>
+                        <div class="validation-msg" id="msg-signup-confirm"></div>
+                    </div>
+
+                    <button type="submit" class="submit-btn">إنشاء حساب</button>
+                </form>
+            </div>
         </div>
-
-        <!-- ── Flip card container ────────────────────────────── -->
-        <div class="auth-card" id="auth-card">
-            <div class="auth-card__inner" id="auth-card-inner">
-
-                <!-- ══════════════════════════════════════════════
-                 FRONT — Login
-                 ══════════════════════════════════════════════ -->
-                <div class="auth-card__face auth-card__front">
-
-                    <!-- Logo -->
-                    <div class="auth-logo">
-                        <div class="auth-logo-icon"><i class="fa-solid fa-cube"></i></div>
-                        <h1 id="auth-title-login">بوابتي</h1>
-                        <p class="auth-subtitle">أهلاً بعودتك 👋</p>
-                    </div>
-
-                    <!-- Method tabs -->
-                    <div class="auth-tabs" role="tablist">
-                        <button class="auth-tab active" id="tab-email" onclick="switchAuthTab('email')" role="tab"
-                            aria-selected="true" aria-controls="auth-form-email">
-                            <i class="fa-solid fa-envelope"></i> بريد إلكتروني
-                        </button>
-                        <button class="auth-tab" id="tab-phone" onclick="switchAuthTab('phone')" role="tab"
-                            aria-selected="false" aria-controls="auth-form-phone">
-                            <i class="fa-solid fa-mobile-screen"></i> هاتف
-                        </button>
-                    </div>
-
-                    <!-- Email Login Form -->
-                    <form id="auth-form-email" class="auth-form auth-method-form active" novalidate role="tabpanel"
-                        aria-labelledby="tab-email">
-
-                        <!-- Honeypot (invisible to humans, catches bots) -->
-                        <input type="text" id="hp-field" name="hp-field" class="hp-field" tabindex="-1"
-                            autocomplete="off" aria-hidden="true">
-
-                        <div class="auth-field">
-                            <i class="fa-solid fa-at auth-field-icon"></i>
-                            <input type="email" id="auth-email" placeholder="البريد الإلكتروني" autocomplete="email"
-                                required aria-label="البريد الإلكتروني">
-                        </div>
-
-                        <div class="auth-field">
-                            <i class="fa-solid fa-lock auth-field-icon"></i>
-                            <input type="password" id="auth-password" placeholder="كلمة المرور"
-                                autocomplete="current-password" required aria-label="كلمة المرور">
-                            <button type="button" class="auth-eye-btn" aria-label="إظهار/إخفاء كلمة المرور"
-                                data-target="auth-password">
-                                <i class="fa-regular fa-eye"></i>
-                            </button>
-                        </div>
-
-                        <!-- Rate-limit indicator (hidden until 3rd failed attempt) -->
-                        <div id="login-attempts-bar" class="attempts-bar" style="display:none;" aria-live="polite">
-                        </div>
-
-                        <button type="submit" class="auth-btn" id="email-submit-btn">
-                            <span class="btn-text">تسجيل الدخول</span>
-                            <span class="btn-spinner" aria-hidden="true"><i
-                                    class="fa-solid fa-circle-notch fa-spin"></i></span>
-                        </button>
-
-                    </form>
-
-                    <!-- Phone OTP Form -->
-                    <form id="auth-form-phone" class="auth-form auth-method-form" style="display:none;" novalidate
-                        role="tabpanel" aria-labelledby="tab-phone">
-
-                        <div id="phone-step-1">
-                            <div class="auth-field">
-                                <i class="fa-solid fa-phone auth-field-icon"></i>
-                                <input type="tel" id="auth-phone" placeholder="+966xxxxxxxxx" dir="ltr"
-                                    autocomplete="tel" aria-label="رقم الهاتف">
-                            </div>
-                            <div id="recaptcha-container"></div>
-                            <button type="button" class="auth-btn" id="phone-send-btn"
-                                onclick="AuthService.signInWithPhone()">
-                                <span class="btn-text"><i class="fa-solid fa-paper-plane"></i> إرسال رمز التحقق</span>
-                                <span class="btn-spinner" aria-hidden="true"><i
-                                        class="fa-solid fa-circle-notch fa-spin"></i></span>
-                            </button>
-                        </div>
-
-                        <div id="phone-step-2" style="display:none;">
-                            <p class="otp-hint">أدخل الرمز المرسَل إلى هاتفك</p>
-                            <div class="otp-inputs" role="group" aria-label="رمز التحقق">
-                                <input type="text" inputmode="numeric" maxlength="1" class="otp-digit"
-                                    aria-label="الرقم 1">
-                                <input type="text" inputmode="numeric" maxlength="1" class="otp-digit"
-                                    aria-label="الرقم 2">
-                                <input type="text" inputmode="numeric" maxlength="1" class="otp-digit"
-                                    aria-label="الرقم 3">
-                                <input type="text" inputmode="numeric" maxlength="1" class="otp-digit"
-                                    aria-label="الرقم 4">
-                                <input type="text" inputmode="numeric" maxlength="1" class="otp-digit"
-                                    aria-label="الرقم 5">
-                                <input type="text" inputmode="numeric" maxlength="1" class="otp-digit"
-                                    aria-label="الرقم 6">
-                            </div>
-                            <input type="hidden" id="auth-otp">
-                            <button type="button" class="auth-btn" id="otp-verify-btn"
-                                onclick="AuthService.verifyOTP()">
-                                <span class="btn-text"><i class="fa-solid fa-check"></i> تأكيد</span>
-                                <span class="btn-spinner" aria-hidden="true"><i
-                                        class="fa-solid fa-circle-notch fa-spin"></i></span>
-                            </button>
-                        </div>
-
-                    </form>
-
-                    <!-- Divider -->
-                    <div class="auth-divider" aria-hidden="true"><span>أو</span></div>
-
-                    <!-- Guest -->
-                    <button class="auth-btn-ghost" onclick="AuthService.guestLogin()">
-                        <i class="fa-solid fa-user-secret"></i> تصفح كزائر
-                    </button>
-
-                    <!-- Switch to signup -->
-                    <p class="auth-switch">
-                        ليس لديك حساب؟
-                        <button type="button" class="auth-switch-link" onclick="toggleAuthView('signup')">
-                            إنشاء حساب جديد
-                        </button>
-                    </p>
-
-                    <!-- Error box -->
-                    <div id="auth-error" class="auth-error-box" role="alert" aria-live="assertive"></div>
-
-                </div><!-- /front -->
-
-
-                <!-- ══════════════════════════════════════════════
-                 BACK — Sign Up
-                 ══════════════════════════════════════════════ -->
-                <div class="auth-card__face auth-card__back">
-
-                    <!-- Logo -->
-                    <div class="auth-logo">
-                        <div class="auth-logo-icon"><i class="fa-solid fa-cube"></i></div>
-                        <h2 id="auth-title-signup">إنشاء حساب</h2>
-                        <p class="auth-subtitle">أنضم إلى بوابتي اليوم ✨</p>
-                    </div>
-
-                    <form id="signup-form" class="auth-form" novalidate>
-
-                        <!-- Honeypot -->
-                        <input type="text" name="hp-field2" class="hp-field" tabindex="-1" autocomplete="off"
-                            aria-hidden="true">
-
-                        <!-- Name row -->
-                        <div class="auth-field-row">
-                            <div class="auth-field">
-                                <i class="fa-solid fa-user auth-field-icon"></i>
-                                <input type="text" id="signup-firstname" placeholder="الاسم الأول"
-                                    autocomplete="given-name" required aria-label="الاسم الأول">
-                            </div>
-                            <div class="auth-field">
-                                <input type="text" id="signup-lastname" placeholder="الاسم الأخير"
-                                    autocomplete="family-name" required aria-label="الاسم الأخير">
-                            </div>
-                        </div>
-
-                        <!-- Email -->
-                        <div class="auth-field" id="signup-email-group">
-                            <i class="fa-solid fa-envelope auth-field-icon"></i>
-                            <input type="email" id="signup-email" placeholder="البريد الإلكتروني" autocomplete="email"
-                                required aria-label="البريد الإلكتروني">
-                        </div>
-
-                        <!-- Password -->
-                        <div class="auth-field">
-                            <i class="fa-solid fa-lock auth-field-icon"></i>
-                            <input type="password" id="signup-password" placeholder="كلمة المرور"
-                                autocomplete="new-password" required aria-label="كلمة المرور">
-                            <button type="button" class="auth-eye-btn" aria-label="إظهار/إخفاء كلمة المرور"
-                                data-target="signup-password">
-                                <i class="fa-regular fa-eye"></i>
-                            </button>
-                        </div>
-
-                        <!-- Live password requirements -->
-                        <ul id="pw-requirements" class="pw-reqs" aria-label="متطلبات كلمة المرور">
-                            <li data-rule="length"> <i class="fa-solid fa-circle-xmark"></i> 8 أحرف على الأقل</li>
-                            <li data-rule="upper"> <i class="fa-solid fa-circle-xmark"></i> حرف كبير (A-Z)</li>
-                            <li data-rule="number"> <i class="fa-solid fa-circle-xmark"></i> رقم (0-9)</li>
-                            <li data-rule="special"> <i class="fa-solid fa-circle-xmark"></i> رمز خاص (!@#…)</li>
-                        </ul>
-
-                        <!-- Confirm password -->
-                        <div class="auth-field">
-                            <i class="fa-solid fa-shield-halved auth-field-icon"></i>
-                            <input type="password" id="signup-confirm-password" placeholder="تأكيد كلمة المرور"
-                                autocomplete="new-password" required aria-label="تأكيد كلمة المرور">
-                            <button type="button" class="auth-eye-btn" aria-label="إظهار/إخفاء كلمة المرور"
-                                data-target="signup-confirm-password">
-                                <i class="fa-regular fa-eye"></i>
-                            </button>
-                        </div>
-
-                        <button type="submit" class="auth-btn" id="signup-submit-btn">
-                            <span class="btn-text"><i class="fa-solid fa-user-plus"></i> إنشاء الحساب</span>
-                            <span class="btn-spinner" aria-hidden="true"><i
-                                    class="fa-solid fa-circle-notch fa-spin"></i></span>
-                        </button>
-
-                    </form>
-
-                    <!-- Error box -->
-                    <div id="signup-error" class="auth-error-box" role="alert" aria-live="assertive"></div>
-
-                    <!-- Switch to login -->
-                    <p class="auth-switch">
-                        لديك حساب؟
-                        <button type="button" class="auth-switch-link" onclick="toggleAuthView('login')">
-                            تسجيل الدخول
-                        </button>
-                    </p>
-
-                </div><!-- /back -->
-
-            </div><!-- /auth-card-inner -->
-        </div><!-- /auth-card -->
-
-    </div><!-- /auth-modal -->
+    </div>
 
 
 
@@ -817,7 +726,8 @@
        LOADING OVERLAY
        Full-screen spinner shown during async operations.
        ════════════════════════════════════════════════════════════ -->
-    <div id="loading-overlay" class="modal-overlay" style="z-index:2000;" aria-hidden="true">
+    <div id="loading-overlay" class="modal-overlay hidden" style="z-index:2000;" aria-hidden="true" aria-live="polite"
+        aria-label="جارٍ التحميل">
         <div class="spinner" role="status" aria-label="جارٍ التحميل..."></div>
     </div>
 
