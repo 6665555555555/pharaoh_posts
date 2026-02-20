@@ -1,248 +1,851 @@
 <!DOCTYPE html>
+<!--
+  ╔══════════════════════════════════════════════════════════════╗
+  ║   بوابتي — Content Portal                                    ║
+  ║   Version: 2.0 | Author: Bawabaty Dev Team                  ║
+  ║   Stack: HTML5 · CSS3 (Glassmorphism) · Vanilla JS (ES6+)   ║
+  ║   Icons: Font Awesome 6 · Fonts: Tajawal (Google Fonts)      ║
+  ╚══════════════════════════════════════════════════════════════╝
+-->
 <html lang="ar" dir="rtl">
 
 <head>
+    <!-- ─── Meta & SEO ─────────────────────────────────────────── -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابتي - My Portal</title>
+    <meta name="description" content="بوابتي — منصة لمشاركة المحتوى بأسلوب عصري واحترافي">
+    <meta name="theme-color" content="#0f172a">
+    <title>بوابتي — My Portal</title>
+
+    <!-- ─── Stylesheet ─────────────────────────────────────────── -->
     <link rel="stylesheet" href="style.css">
-    <!-- Google Fonts for premium typography -->
+
+    <!-- ─── Google Fonts: Tajawal (Arabic-optimized) ─────────── -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700;900&display=swap" rel="stylesheet">
-    <!-- Font Awesome for Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap"
+        rel="stylesheet">
+
+    <!-- ─── Font Awesome 6 (Icons Library) ────────────────────── -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
 
-    <div class="background-globes">
+    <!-- ════════════════════════════════════════════════════════════
+       DECORATIVE BACKGROUND BLOBS
+       Animated gradient orbs for the glassmorphism effect.
+       ════════════════════════════════════════════════════════════ -->
+    <div class="background-globes" aria-hidden="true">
         <div class="globe globe-1"></div>
         <div class="globe globe-2"></div>
         <div class="globe globe-3"></div>
     </div>
 
+    <!-- ════════════════════════════════════════════════════════════
+       APP ROOT CONTAINER
+       Houses sidebar + main content in a flex layout.
+       ════════════════════════════════════════════════════════════ -->
     <div class="app-container">
 
-        <!-- Sidebar / Navigation -->
-        <aside class="sidebar glass-panel">
+        <!-- ── Mobile Sidebar Overlay (click to close) ─────────── -->
+        <div id="sidebar-overlay" class="sidebar-overlay" aria-hidden="true"></div>
+
+        <!-- ════════════════════════════════════════════════════════
+         SIDEBAR / NAVIGATION
+         Sticky side panel with logo, user info, nav links,
+         and social media shortcuts.
+         ════════════════════════════════════════════════════════ -->
+        <aside id="sidebar" class="sidebar glass-panel" role="navigation" aria-label="القائمة الرئيسية">
+
+            <!-- Close button — mobile only -->
+            <button id="sidebar-close-btn" class="sidebar-close-btn" aria-label="إغلاق القائمة">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- Logo & App Name -->
             <div class="logo">
-                <i class="fa-solid fa-cube"></i>
+                <i class="fa-solid fa-cube" aria-hidden="true"></i>
                 <h1>بوابتي</h1>
             </div>
 
-            <!-- User Profile (Hidden by default) -->
-            <div id="user-profile" class="user-profile glass-panel"
-                style="display: none; padding: 15px; margin-bottom: 20px; align-items: center; gap: 10px;">
-                <div class="user-avatar"
-                    style="width: 40px; height: 40px; background: var(--accent-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
-                    U</div>
+            <!-- User Profile Box (shown after login) -->
+            <div id="user-profile" class="user-profile glass-panel" style="display:none;" role="region"
+                aria-label="معلومات المستخدم">
+                <div class="user-avatar" aria-hidden="true">U</div>
                 <div class="user-info">
-                    <h4 id="user-email" style="font-size: 0.9rem; word-break: break-all;">user@email.com</h4>
-                    <button id="logout-btn"
-                        style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.8rem; margin-top: 5px;">تسجيل
-                        خروج</button>
+                    <h4 id="user-email">user@email.com</h4>
+                    <button id="logout-btn" class="logout-btn">
+                        <i class="fa-solid fa-right-from-bracket"></i> تسجيل خروج
+                    </button>
                 </div>
             </div>
 
-            <nav class="nav-links">
-                <a href="#" class="active"><i class="fa-solid fa-house"></i> الرئيسية</a>
-                <a href="#"><i class="fa-solid fa-compass"></i> استكشاف</a>
-                <a href="#" id="nav-scheduled"><i class="fa-regular fa-calendar-check"></i> المجدولة</a>
-                <a href="#"><i class="fa-solid fa-bookmark"></i> المحفوظات</a>
+            <!-- Guest Controls (shown when browsing anonymously) -->
+            <div id="guest-controls" class="guest-controls glass-panel" style="display:none;" role="region"
+                aria-label="وضع الزائر">
+                <i class="fa-solid fa-user-secret" aria-hidden="true"></i>
+                <p>أنت تتصفح كزائر</p>
+                <button id="guest-login-btn" class="btn-primary">
+                    <i class="fa-solid fa-key"></i> تسجيل الدخول
+                </button>
+            </div>
+
+            <!-- Primary Navigation Links -->
+            <nav class="nav-links" aria-label="التنقل">
+                <a href="#" class="active" aria-current="page">
+                    <i class="fa-solid fa-house" aria-hidden="true"></i> الرئيسية
+                </a>
+                <a href="#">
+                    <i class="fa-solid fa-compass" aria-hidden="true"></i> استكشاف
+                </a>
+                <a href="#" id="nav-scheduled">
+                    <i class="fa-regular fa-calendar-check" aria-hidden="true"></i> المجدولة
+                </a>
+                <a href="#">
+                    <i class="fa-solid fa-bookmark" aria-hidden="true"></i> المحفوظات
+                </a>
             </nav>
 
+            <!-- Social Media Hub -->
             <div class="social-hub">
                 <h3>تواصل معي</h3>
-                <div class="social-icons">
-                    <a href="#" class="social-link instagram"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#" class="social-link tiktok"><i class="fa-brands fa-tiktok"></i></a>
-                    <a href="#" class="social-link youtube"><i class="fa-brands fa-youtube"></i></a>
-                    <a href="#" class="social-link twitter"><i class="fa-brands fa-x-twitter"></i></a>
-                    <a href="#" class="social-link linkedin"><i class="fa-brands fa-linkedin-in"></i></a>
-                    <a href="#" class="social-link snapchat"><i class="fa-brands fa-snapchat"></i></a>
+                <div class="social-icons" role="list">
+                    <a href="#" class="social-link instagram" role="listitem" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                    <a href="#" class="social-link tiktok" role="listitem" aria-label="TikTok">
+                        <i class="fa-brands fa-tiktok"></i>
+                    </a>
+                    <a href="#" class="social-link youtube" role="listitem" aria-label="YouTube">
+                        <i class="fa-brands fa-youtube"></i>
+                    </a>
+                    <a href="#" class="social-link twitter" role="listitem" aria-label="X (Twitter)">
+                        <i class="fa-brands fa-x-twitter"></i>
+                    </a>
+                    <a href="#" class="social-link linkedin" role="listitem" aria-label="LinkedIn">
+                        <i class="fa-brands fa-linkedin-in"></i>
+                    </a>
+                    <a href="#" class="social-link snapchat" role="listitem" aria-label="Snapchat">
+                        <i class="fa-brands fa-snapchat"></i>
+                    </a>
                 </div>
             </div>
-        </aside>
 
-        <!-- Main Content Area -->
-        <main class="main-content">
+        </aside><!-- /sidebar -->
 
-            <header class="top-bar glass-panel">
-                <div class="search-bar">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="ابحث عن مقالات، صور، ملفات...">
-                </div>
-                <button id="open-upload-modal" class="btn-primary">
-                    <i class="fa-solid fa-plus"></i> مشاركة جديدة
+
+        <!-- ════════════════════════════════════════════════════════
+         MAIN CONTENT AREA
+         Holds the top bar header and the scrollable feed grid.
+         ════════════════════════════════════════════════════════ -->
+        <main class="main-content" role="main">
+
+            <!-- ── Top Bar ─────────────────────────────────────────── -->
+            <header class="top-bar glass-panel" role="banner">
+
+                <!-- Hamburger toggle (mobile only) -->
+                <button id="hamburger-btn" class="hamburger-btn" aria-label="فتح القائمة" aria-expanded="false">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </button>
-            </header>
 
-            <div id="feed-container" class="feed-grid">
-                <!-- Content will be injected here via JS -->
-            </div>
-
-        </main>
-
-    </div>
-
-    <!-- Upload Modal -->
-    <div id="upload-modal" class="modal-overlay hidden">
-        <div class="modal-content glass-panel">
-            <div class="modal-header">
-                <h2>إضافة محتوى جديد</h2>
-                <button id="close-modal" class="close-btn"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-
-            <div class="modal-body">
-                <div class="tabs">
-                    <button class="tab-btn active" data-tab="article">مقال</button>
-                    <button class="tab-btn" data-tab="image">صورة</button>
-                    <button class="tab-btn" data-tab="file">ملف</button>
+                <!-- Search Input -->
+                <div class="search-bar" role="search">
+                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                    <input type="search" placeholder="ابحث عن مقالات، صور، ملفات..." aria-label="بحث">
                 </div>
 
-                <form id="upload-form">
-                    <div class="form-group" style="position: relative;">
-                        <label>العنوان</label>
-                        <input type="text" id="post-title" placeholder="أدخل عنواناً مميزاً..." required>
-                        <button type="button" id="idea-btn"
-                            style="position: absolute; left: 0; top: 0; background: none; border: none; color: var(--accent-glow); cursor: pointer; font-size: 0.9rem;">
-                            <i class="fa-regular fa-lightbulb"></i> اقترح فكرة
+                <!-- Action Buttons -->
+                <div class="top-bar-actions">
+                    <!-- Dark / Light Mode Toggle -->
+                    <button id="theme-toggle-btn" class="theme-toggle" title="تبديل الوضع الليلي/النهاري"
+                        aria-label="تبديل الثيم">
+                        <i class="fa-solid fa-sun icon-light" aria-hidden="true"></i>
+                        <i class="fa-solid fa-moon icon-dark" aria-hidden="true"></i>
+                    </button>
+
+                    <!-- New Post Button -->
+                    <button id="open-upload-modal" class="btn-primary">
+                        <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                        <span class="btn-label">مشاركة جديدة</span>
+                    </button>
+                </div>
+
+            </header><!-- /top-bar -->
+
+            <!-- ── Content Feed (populated by JS) ─────────────────── -->
+            <div id="feed-container" class="feed-grid" role="feed" aria-label="آخر المنشورات">
+                <!-- Post cards are injected here by PostService -->
+            </div>
+
+        </main><!-- /main-content -->
+
+    </div><!-- /app-container -->
+
+
+    <!-- ════════════════════════════════════════════════════════════
+       UPLOAD MODAL — Advanced Post Editor
+       Two-column layout:
+         • Right column  → Form / Editor / Options
+         • Left column   → Live Preview card
+       ════════════════════════════════════════════════════════════ -->
+    <div id="upload-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-heading">
+
+        <div class="modal-content modal-wide glass-panel">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h3 id="modal-heading">
+                    <i class="fa-solid fa-pen-nib" aria-hidden="true"></i> مشاركة جديدة
+                </h3>
+                <button id="close-modal" class="close-btn" aria-label="إغلاق">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- ── Two-Column Layout ─────────────────────────────── -->
+            <div class="modal-editor-layout">
+
+                <!-- ══════════════════════════════════════════════════
+             EDITOR COLUMN (Right in RTL)
+             Contains: title, rich-text editor, drag-drop
+             zone, and advanced options panel.
+             ══════════════════════════════════════════════════ -->
+                <div class="editor-column">
+                    <form id="upload-form" novalidate>
+
+                        <!-- 1. Post Title -->
+                        <input type="text" id="post-title" placeholder="عنوان المنشور..." required class="title-input"
+                            aria-label="عنوان المنشور" maxlength="120">
+
+                        <!-- ── 2. Rich Text Editor (RTE) ──────────────── -->
+                        <!-- Toolbar: formatting commands via execCommand -->
+                        <div class="rte-toolbar" role="toolbar" aria-label="أدوات التنسيق">
+
+                            <!-- Text Formatting Group -->
+                            <button type="button" class="rte-btn" data-cmd="bold" title="عريض (Ctrl+B)"
+                                aria-label="عريض">
+                                <i class="fa-solid fa-bold"></i>
+                            </button>
+                            <button type="button" class="rte-btn" data-cmd="italic" title="مائل (Ctrl+I)"
+                                aria-label="مائل">
+                                <i class="fa-solid fa-italic"></i>
+                            </button>
+                            <button type="button" class="rte-btn" data-cmd="underline" title="تسطير (Ctrl+U)"
+                                aria-label="تسطير">
+                                <i class="fa-solid fa-underline"></i>
+                            </button>
+
+                            <div class="rte-divider" role="separator"></div>
+
+                            <!-- List Group -->
+                            <button type="button" class="rte-btn" data-cmd="insertUnorderedList" title="قائمة نقطية"
+                                aria-label="قائمة نقطية">
+                                <i class="fa-solid fa-list-ul"></i>
+                            </button>
+                            <button type="button" class="rte-btn" data-cmd="insertOrderedList" title="قائمة مرقمة"
+                                aria-label="قائمة مرقمة">
+                                <i class="fa-solid fa-list-ol"></i>
+                            </button>
+
+                            <div class="rte-divider" role="separator"></div>
+
+                            <!-- Alignment Group -->
+                            <button type="button" class="rte-btn" data-cmd="justifyRight" title="محاذاة يمين"
+                                aria-label="محاذاة يمين">
+                                <i class="fa-solid fa-align-right"></i>
+                            </button>
+                            <button type="button" class="rte-btn" data-cmd="justifyCenter" title="توسيط"
+                                aria-label="توسيط">
+                                <i class="fa-solid fa-align-center"></i>
+                            </button>
+                            <button type="button" class="rte-btn" data-cmd="justifyLeft" title="محاذاة يسار"
+                                aria-label="محاذاة يسار">
+                                <i class="fa-solid fa-align-left"></i>
+                            </button>
+
+                            <div class="rte-divider" role="separator"></div>
+
+                            <!-- Link & Clear -->
+                            <button type="button" class="rte-btn" id="rte-link-btn" title="إضافة رابط"
+                                aria-label="إضافة رابط">
+                                <i class="fa-solid fa-link"></i>
+                            </button>
+                            <button type="button" class="rte-btn" data-cmd="removeFormat" title="مسح التنسيق"
+                                aria-label="مسح التنسيق">
+                                <i class="fa-solid fa-eraser"></i>
+                            </button>
+
+                        </div><!-- /rte-toolbar -->
+
+                        <!-- Editable content area (contenteditable div) -->
+                        <div id="post-content-editor" class="rte-editor" contenteditable="true" dir="rtl" role="textbox"
+                            aria-multiline="true" aria-label="محتوى المنشور"
+                            data-placeholder="بماذا تفكر؟ اكتب محتوى منشورك هنا...">
+                        </div>
+
+                        <!-- Hidden textarea synced with RTE content (for form submission) -->
+                        <textarea id="post-content" hidden aria-hidden="true"></textarea>
+
+
+                        <!-- ── 3. Drag & Drop File Upload Zone ────────── -->
+                        <div id="drop-zone" class="drop-zone" role="button"
+                            aria-label="منطقة رفع الملفات — اسحب وأفلت أو انقر للاختيار" tabindex="0">
+
+                            <!-- Default prompt (visible when no file selected) -->
+                            <div class="drop-zone-inner">
+                                <i class="fa-solid fa-cloud-arrow-up drop-zone-icon" aria-hidden="true"></i>
+                                <p class="drop-zone-text">اسحب صورة أو ملفاً هنا</p>
+                                <p class="drop-zone-hint">PNG، JPG، PDF، MP4 — حتى 50 MB</p>
+                                <div class="drop-zone-actions">
+                                    <!-- Image picker trigger -->
+                                    <button type="button" class="action-chip"
+                                        onclick="document.getElementById('image-input').click()">
+                                        <i class="fa-regular fa-image"></i> صورة
+                                        <input type="file" id="image-input" accept="image/*" hidden aria-hidden="true">
+                                    </button>
+                                    <!-- Generic file picker trigger -->
+                                    <button type="button" class="action-chip"
+                                        onclick="document.getElementById('file-input').click()">
+                                        <i class="fa-solid fa-paperclip"></i> ملف
+                                        <input type="file" id="file-input" hidden aria-hidden="true">
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Media preview area (shown after file selection) -->
+                            <div id="media-preview-area" style="display:none; position:relative;">
+                                <button type="button" id="clear-media" class="clear-media-btn"
+                                    aria-label="إزالة الملف المرفق">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                                <!-- Image/file preview injected here by EditorService -->
+                                <div id="media-content"></div>
+                            </div>
+
+                        </div><!-- /drop-zone -->
+
+
+                        <!-- ── 4. Advanced Options Toggle ─────────────── -->
+                        <div class="advanced-toggle-row">
+                            <button type="button" class="action-chip" id="toggle-options-btn" aria-expanded="false"
+                                aria-controls="advanced-options">
+                                <i class="fa-solid fa-sliders"></i> خيارات متقدمة
+                            </button>
+                        </div>
+
+                        <!-- Advanced Options Panel (collapsed by default) -->
+                        <div id="advanced-options" style="display:none;" role="region" aria-label="الخيارات المتقدمة">
+
+                            <!-- ── 4a. Post Template Chooser ──────────── -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fa-solid fa-palette" aria-hidden="true"></i>
+                                    قالب المنشور
+                                </label>
+                                <div class="design-chips" role="radiogroup" aria-label="اختر قالب العرض">
+                                    <div class="design-option active" data-style="classic" role="radio"
+                                        aria-checked="true" tabindex="0">
+                                        <i class="fa-solid fa-newspaper" aria-hidden="true"></i> Classic
+                                    </div>
+                                    <div class="design-option" data-style="modern" role="radio" aria-checked="false"
+                                        tabindex="0">
+                                        <i class="fa-solid fa-layer-group" aria-hidden="true"></i> Modern
+                                    </div>
+                                    <div class="design-option" data-style="neon" role="radio" aria-checked="false"
+                                        tabindex="0">
+                                        <i class="fa-solid fa-bolt" aria-hidden="true"></i> Neon
+                                    </div>
+                                    <div class="design-option" data-style="quote" role="radio" aria-checked="false"
+                                        tabindex="0">
+                                        <i class="fa-solid fa-quote-right" aria-hidden="true"></i> Quote
+                                    </div>
+                                </div>
+                                <!-- Hidden field stores selected template value -->
+                                <input type="hidden" id="post-style" value="classic">
+                            </div>
+
+                            <!-- ── 4b. Private / Public Toggle ──────────── -->
+                            <div class="toggle-row">
+                                <span class="toggle-label">
+                                    <i class="fa-solid fa-lock" aria-hidden="true"></i>
+                                    منشور خاص
+                                </span>
+                                <label class="toggle-switch" aria-label="تفعيل الخصوصية">
+                                    <input type="checkbox" id="post-private" role="switch">
+                                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                                </label>
+                            </div>
+
+                            <!-- ── 4c. Publish Time Picker ─────────────── -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fa-regular fa-clock" aria-hidden="true"></i>
+                                    وقت النشر
+                                </label>
+
+                                <!-- Tab-style switcher: Now / Schedule -->
+                                <div class="publish-type-tabs" role="tablist">
+                                    <button type="button" class="pub-tab active" data-pub="now" role="tab"
+                                        aria-selected="true">
+                                        <i class="fa-solid fa-bolt" aria-hidden="true"></i> الآن
+                                    </button>
+                                    <button type="button" class="pub-tab" data-pub="schedule" role="tab"
+                                        aria-selected="false">
+                                        <i class="fa-regular fa-calendar-check" aria-hidden="true"></i> جدولة
+                                    </button>
+                                </div>
+
+                                <!-- Schedule Picker (shown when "جدولة" is selected) -->
+                                <div id="schedule-picker" class="schedule-picker" style="display:none;" role="tabpanel">
+                                    <div class="schedule-picker-inner">
+                                        <i class="fa-solid fa-calendar-days picker-icon" aria-hidden="true"></i>
+                                        <!-- Native datetime-local (hidden, opened programmatically) -->
+                                        <input type="datetime-local" id="schedule-input" class="datetime-input"
+                                            aria-label="اختر تاريخ ووقت النشر">
+                                        <!-- Human-readable display label -->
+                                        <span id="schedule-display" class="schedule-display">
+                                            اختر تاريخاً ووقتاً
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Hidden field storing publish mode: "now" | "schedule" -->
+                                <input type="hidden" id="publish-type-select" value="now">
+                            </div>
+
+                            <!-- ── 4d. Social Platform Toggles ────────── -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fa-solid fa-share-nodes" aria-hidden="true"></i>
+                                    نشر تلقائي على المنصات
+                                </label>
+                                <div class="social-toggles-grid">
+
+                                    <!-- Instagram -->
+                                    <div class="social-toggle-item" data-platform="instagram">
+                                        <div class="soc-tog-left">
+                                            <i class="fa-brands fa-instagram" aria-hidden="true"
+                                                style="color:#E1306C"></i>
+                                            <span>Instagram</span>
+                                        </div>
+                                        <label class="toggle-switch" aria-label="نشر على Instagram">
+                                            <input type="checkbox" name="social_platform" value="instagram"
+                                                role="switch">
+                                            <span class="toggle-track" style="--tog-on:#E1306C">
+                                                <span class="toggle-thumb"></span>
+                                            </span>
+                                        </label>
+                                    </div>
+
+                                    <!-- X (Twitter) -->
+                                    <div class="social-toggle-item" data-platform="twitter">
+                                        <div class="soc-tog-left">
+                                            <i class="fa-brands fa-x-twitter" aria-hidden="true"></i>
+                                            <span>X (Twitter)</span>
+                                        </div>
+                                        <label class="toggle-switch" aria-label="نشر على X (Twitter)">
+                                            <input type="checkbox" name="social_platform" value="twitter" role="switch">
+                                            <span class="toggle-track" style="--tog-on:#1DA1F2">
+                                                <span class="toggle-thumb"></span>
+                                            </span>
+                                        </label>
+                                    </div>
+
+                                    <!-- TikTok -->
+                                    <div class="social-toggle-item" data-platform="tiktok">
+                                        <div class="soc-tog-left">
+                                            <i class="fa-brands fa-tiktok" aria-hidden="true"></i>
+                                            <span>TikTok</span>
+                                        </div>
+                                        <label class="toggle-switch" aria-label="نشر على TikTok">
+                                            <input type="checkbox" name="social_platform" value="tiktok" role="switch">
+                                            <span class="toggle-track" style="--tog-on:#69C9D0">
+                                                <span class="toggle-thumb"></span>
+                                            </span>
+                                        </label>
+                                    </div>
+
+                                    <!-- YouTube -->
+                                    <div class="social-toggle-item" data-platform="youtube">
+                                        <div class="soc-tog-left">
+                                            <i class="fa-brands fa-youtube" aria-hidden="true"
+                                                style="color:#FF0000"></i>
+                                            <span>YouTube</span>
+                                        </div>
+                                        <label class="toggle-switch" aria-label="نشر على YouTube">
+                                            <input type="checkbox" name="social_platform" value="youtube" role="switch">
+                                            <span class="toggle-track" style="--tog-on:#FF0000">
+                                                <span class="toggle-thumb"></span>
+                                            </span>
+                                        </label>
+                                    </div>
+
+                                    <!-- LinkedIn -->
+                                    <div class="social-toggle-item" data-platform="linkedin">
+                                        <div class="soc-tog-left">
+                                            <i class="fa-brands fa-linkedin-in" aria-hidden="true"
+                                                style="color:#0A66C2"></i>
+                                            <span>LinkedIn</span>
+                                        </div>
+                                        <label class="toggle-switch" aria-label="نشر على LinkedIn">
+                                            <input type="checkbox" name="social_platform" value="linkedin"
+                                                role="switch">
+                                            <span class="toggle-track" style="--tog-on:#0A66C2">
+                                                <span class="toggle-thumb"></span>
+                                            </span>
+                                        </label>
+                                    </div>
+
+                                </div><!-- /social-toggles-grid -->
+                            </div>
+
+                        </div><!-- /advanced-options -->
+
+
+                        <!-- ── 5. Form Footer: Draft + Publish Buttons ── -->
+                        <div class="modal-footer">
+                            <!-- Draft saved status indicator (shown after save) -->
+                            <div class="draft-status" id="draft-status" style="display:none;" aria-live="polite">
+                                <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                                <span id="draft-status-text">تم حفظ المسودة</span>
+                            </div>
+                            <!-- Save Draft manually -->
+                            <button type="button" class="btn-secondary" id="save-draft-btn">
+                                <i class="fa-regular fa-floppy-disk" aria-hidden="true"></i> حفظ مسودة
+                            </button>
+                            <!-- Publish / Submit -->
+                            <button type="submit" class="btn-primary">
+                                <i class="fa-solid fa-paper-plane" aria-hidden="true"></i> نشر
+                            </button>
+                        </div>
+
+                    </form>
+                </div><!-- /editor-column -->
+
+
+                <!-- ══════════════════════════════════════════════════
+             PREVIEW COLUMN (Left in RTL)
+             Live mirror of the post as the user types.
+             Updates in real-time via EditorService.
+             ══════════════════════════════════════════════════ -->
+                <div class="preview-column" role="complementary" aria-label="معاينة المنشور">
+
+                    <div class="preview-column-header">
+                        <i class="fa-solid fa-eye" aria-hidden="true"></i> معاينة المنشور
+                    </div>
+
+                    <!-- Live Preview Card — mirrors a published post card -->
+                    <article id="post-live-preview" class="post-card classic preview-card"
+                        aria-label="معاينة حية للمنشور">
+                        <div class="post-header">
+                            <div>
+                                <b id="preview-title">عنوان المنشور</b>
+                            </div>
+                            <div class="meta">
+                                <span id="preview-date">الآن</span>
+                            </div>
+                        </div>
+                        <div id="preview-body" class="post-text preview-body-text">
+                            محتوى المنشور سيظهر هنا...
+                        </div>
+                        <!-- Media preview mirrored from drop zone -->
+                        <div id="preview-media" style="display:none;" aria-hidden="true"></div>
+                        <div class="post-footer">
+                            <span class="user-badge">
+                                <i class="fa-solid fa-user" aria-hidden="true"></i> أنت
+                            </span>
+                        </div>
+                    </article>
+
+                    <p class="preview-hint" aria-hidden="true">يتحدّث المعاينة تلقائياً أثناء الكتابة</p>
+
+                </div><!-- /preview-column -->
+
+            </div><!-- /modal-editor-layout -->
+
+        </div><!-- /modal-content -->
+    </div><!-- /upload-modal -->
+
+
+    <!-- ════════════════════════════════════════════════════════════
+       AUTH SCREEN — Fullscreen centered card
+       Two faces toggled with a 3-D flip animation:
+         • .auth-card__front  — Login  (email / phone / guest)
+         • .auth-card__back   — Signup (name, email, password)
+       ════════════════════════════════════════════════════════════ -->
+    <div id="auth-modal" class="auth-screen active" role="dialog" aria-modal="true" aria-labelledby="auth-title-login">
+
+        <!-- ── Animated background orbs (decorative) ──────────── -->
+        <div class="auth-bg-orbs" aria-hidden="true">
+            <span class="auth-orb o1"></span>
+            <span class="auth-orb o2"></span>
+            <span class="auth-orb o3"></span>
+        </div>
+
+        <!-- ── Flip card container ────────────────────────────── -->
+        <div class="auth-card" id="auth-card">
+            <div class="auth-card__inner" id="auth-card-inner">
+
+                <!-- ══════════════════════════════════════════════
+                 FRONT — Login
+                 ══════════════════════════════════════════════ -->
+                <div class="auth-card__face auth-card__front">
+
+                    <!-- Logo -->
+                    <div class="auth-logo">
+                        <div class="auth-logo-icon"><i class="fa-solid fa-cube"></i></div>
+                        <h1 id="auth-title-login">بوابتي</h1>
+                        <p class="auth-subtitle">أهلاً بعودتك 👋</p>
+                    </div>
+
+                    <!-- Method tabs -->
+                    <div class="auth-tabs" role="tablist">
+                        <button class="auth-tab active" id="tab-email" onclick="switchAuthTab('email')" role="tab"
+                            aria-selected="true" aria-controls="auth-form-email">
+                            <i class="fa-solid fa-envelope"></i> بريد إلكتروني
+                        </button>
+                        <button class="auth-tab" id="tab-phone" onclick="switchAuthTab('phone')" role="tab"
+                            aria-selected="false" aria-controls="auth-form-phone">
+                            <i class="fa-solid fa-mobile-screen"></i> هاتف
                         </button>
                     </div>
 
-                    <div class="form-group" style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        <label style="width: 100%;">اختر التصميم:</label>
-                        <div class="design-option active" data-style="classic">Classic</div>
-                        <div class="design-option" data-style="modern">Modern</div>
-                        <div class="design-option" data-style="neon">Neon</div>
-                        <div class="design-option" data-style="quote">Quote</div>
-                        <input type="hidden" id="post-style" value="classic">
-                    </div>
+                    <!-- Email Login Form -->
+                    <form id="auth-form-email" class="auth-form auth-method-form active" novalidate role="tabpanel"
+                        aria-labelledby="tab-email">
 
-                    <div class="form-group"
-                        style="display: flex; gap: 10px; align-items: center; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
-                        <label style="margin:0;"><i class="fa-regular fa-clock"></i> وقت النشر:</label>
-                        <input type="datetime-local" id="schedule-input"
-                            style="width: auto; flex-grow: 1; background: #0f172a; border: 1px solid rgba(255,255,255,0.1); color: white; padding: 5px; border-radius: 4px;">
-                    </div>
+                        <!-- Honeypot (invisible to humans, catches bots) -->
+                        <input type="text" id="hp-field" name="hp-field" class="hp-field" tabindex="-1"
+                            autocomplete="off" aria-hidden="true">
 
-                    <div class="form-group"
-                        style="display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
-                        <input type="checkbox" id="post-private" style="width: 20px; height: 20px;">
-                        <label for="post-private" style="margin: 0; cursor: pointer;">
-                            <i class="fa-solid fa-lock"></i> منشور خاص (لا يراه إلا أنت)
-                        </label>
-                    </div>
-
-                    <!-- Social Media Auto-Publish Selection -->
-                    <div class="form-group" style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
-                        <label style="margin-bottom: 10px; display: block;">نشر تلقائي أيضاً على:</label>
-                        <div class="social-select-grid" style="display: flex; gap: 10px; flex-wrap: wrap;">
-                            <label class="social-checkbox"
-                                style="cursor: pointer; display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); padding: 8px 12px; border-radius: 20px; border: 1px solid transparent; transition: 0.3s;">
-                                <input type="checkbox" name="social_platform" value="twitter" hidden>
-                                <i class="fa-brands fa-x-twitter"></i> Twitter
-                            </label>
-                            <label class="social-checkbox"
-                                style="cursor: pointer; display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); padding: 8px 12px; border-radius: 20px; border: 1px solid transparent; transition: 0.3s;">
-                                <input type="checkbox" name="social_platform" value="facebook" hidden>
-                                <i class="fa-brands fa-facebook"></i> Facebook
-                            </label>
-                            <label class="social-checkbox"
-                                style="cursor: pointer; display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); padding: 8px 12px; border-radius: 20px; border: 1px solid transparent; transition: 0.3s;">
-                                <input type="checkbox" name="social_platform" value="instagram" hidden>
-                                <i class="fa-brands fa-instagram"></i> Instagram
-                            </label>
-                            <label class="social-checkbox"
-                                style="cursor: pointer; display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); padding: 8px 12px; border-radius: 20px; border: 1px solid transparent; transition: 0.3s;">
-                                <input type="checkbox" name="social_platform" value="linkedin" hidden>
-                                <i class="fa-brands fa-linkedin-in"></i> LinkedIn
-                            </label>
+                        <div class="auth-field">
+                            <i class="fa-solid fa-at auth-field-icon"></i>
+                            <input type="email" id="auth-email" placeholder="البريد الإلكتروني" autocomplete="email"
+                                required aria-label="البريد الإلكتروني">
                         </div>
-                    </div>
 
-                    <!-- Article Section -->
-                    <div class="tab-content active" id="article-section">
-                        <label>المحتوى</label>
-                        <textarea id="post-content" rows="6" placeholder="بماذا تفكر؟"></textarea>
-                    </div>
-
-                    <!-- Image Section -->
-                    <div class="tab-content" id="image-section">
-                        <div class="file-drop-area" id="image-drop-area">
-                            <i class="fa-regular fa-image"></i>
-                            <p>اسحب الصورة هنا أو اضغط للرفع</p>
-                            <input type="file" id="image-input" accept="image/*" hidden>
-                            <div id="image-preview"></div>
+                        <div class="auth-field">
+                            <i class="fa-solid fa-lock auth-field-icon"></i>
+                            <input type="password" id="auth-password" placeholder="كلمة المرور"
+                                autocomplete="current-password" required aria-label="كلمة المرور">
+                            <button type="button" class="auth-eye-btn" aria-label="إظهار/إخفاء كلمة المرور"
+                                data-target="auth-password">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
                         </div>
-                    </div>
 
-                    <!-- File Section -->
-                    <div class="tab-content" id="file-section">
-                        <div class="file-drop-area" id="file-drop-area">
-                            <i class="fa-solid fa-file-arrow-up"></i>
-                            <p>اختر ملفاً للرفع (PDF, Docx, etc)</p>
-                            <input type="file" id="file-input" hidden>
-                            <div id="file-preview"></div>
+                        <!-- Rate-limit indicator (hidden until 3rd failed attempt) -->
+                        <div id="login-attempts-bar" class="attempts-bar" style="display:none;" aria-live="polite">
                         </div>
+
+                        <button type="submit" class="auth-btn" id="email-submit-btn">
+                            <span class="btn-text">تسجيل الدخول</span>
+                            <span class="btn-spinner" aria-hidden="true"><i
+                                    class="fa-solid fa-circle-notch fa-spin"></i></span>
+                        </button>
+
+                    </form>
+
+                    <!-- Phone OTP Form -->
+                    <form id="auth-form-phone" class="auth-form auth-method-form" style="display:none;" novalidate
+                        role="tabpanel" aria-labelledby="tab-phone">
+
+                        <div id="phone-step-1">
+                            <div class="auth-field">
+                                <i class="fa-solid fa-phone auth-field-icon"></i>
+                                <input type="tel" id="auth-phone" placeholder="+966xxxxxxxxx" dir="ltr"
+                                    autocomplete="tel" aria-label="رقم الهاتف">
+                            </div>
+                            <div id="recaptcha-container"></div>
+                            <button type="button" class="auth-btn" id="phone-send-btn"
+                                onclick="AuthService.signInWithPhone()">
+                                <span class="btn-text"><i class="fa-solid fa-paper-plane"></i> إرسال رمز التحقق</span>
+                                <span class="btn-spinner" aria-hidden="true"><i
+                                        class="fa-solid fa-circle-notch fa-spin"></i></span>
+                            </button>
+                        </div>
+
+                        <div id="phone-step-2" style="display:none;">
+                            <p class="otp-hint">أدخل الرمز المرسَل إلى هاتفك</p>
+                            <div class="otp-inputs" role="group" aria-label="رمز التحقق">
+                                <input type="text" inputmode="numeric" maxlength="1" class="otp-digit"
+                                    aria-label="الرقم 1">
+                                <input type="text" inputmode="numeric" maxlength="1" class="otp-digit"
+                                    aria-label="الرقم 2">
+                                <input type="text" inputmode="numeric" maxlength="1" class="otp-digit"
+                                    aria-label="الرقم 3">
+                                <input type="text" inputmode="numeric" maxlength="1" class="otp-digit"
+                                    aria-label="الرقم 4">
+                                <input type="text" inputmode="numeric" maxlength="1" class="otp-digit"
+                                    aria-label="الرقم 5">
+                                <input type="text" inputmode="numeric" maxlength="1" class="otp-digit"
+                                    aria-label="الرقم 6">
+                            </div>
+                            <input type="hidden" id="auth-otp">
+                            <button type="button" class="auth-btn" id="otp-verify-btn"
+                                onclick="AuthService.verifyOTP()">
+                                <span class="btn-text"><i class="fa-solid fa-check"></i> تأكيد</span>
+                                <span class="btn-spinner" aria-hidden="true"><i
+                                        class="fa-solid fa-circle-notch fa-spin"></i></span>
+                            </button>
+                        </div>
+
+                    </form>
+
+                    <!-- Divider -->
+                    <div class="auth-divider" aria-hidden="true"><span>أو</span></div>
+
+                    <!-- Guest -->
+                    <button class="auth-btn-ghost" onclick="AuthService.guestLogin()">
+                        <i class="fa-solid fa-user-secret"></i> تصفح كزائر
+                    </button>
+
+                    <!-- Switch to signup -->
+                    <p class="auth-switch">
+                        ليس لديك حساب؟
+                        <button type="button" class="auth-switch-link" onclick="toggleAuthView('signup')">
+                            إنشاء حساب جديد
+                        </button>
+                    </p>
+
+                    <!-- Error box -->
+                    <div id="auth-error" class="auth-error-box" role="alert" aria-live="assertive"></div>
+
+                </div><!-- /front -->
+
+
+                <!-- ══════════════════════════════════════════════
+                 BACK — Sign Up
+                 ══════════════════════════════════════════════ -->
+                <div class="auth-card__face auth-card__back">
+
+                    <!-- Logo -->
+                    <div class="auth-logo">
+                        <div class="auth-logo-icon"><i class="fa-solid fa-cube"></i></div>
+                        <h2 id="auth-title-signup">إنشاء حساب</h2>
+                        <p class="auth-subtitle">أنضم إلى بوابتي اليوم ✨</p>
                     </div>
 
-                    <button type="submit" class="btn-primary btn-block">نشر</button>
-                </form>
-            </div>
-        </div>
+                    <form id="signup-form" class="auth-form" novalidate>
+
+                        <!-- Honeypot -->
+                        <input type="text" name="hp-field2" class="hp-field" tabindex="-1" autocomplete="off"
+                            aria-hidden="true">
+
+                        <!-- Name row -->
+                        <div class="auth-field-row">
+                            <div class="auth-field">
+                                <i class="fa-solid fa-user auth-field-icon"></i>
+                                <input type="text" id="signup-firstname" placeholder="الاسم الأول"
+                                    autocomplete="given-name" required aria-label="الاسم الأول">
+                            </div>
+                            <div class="auth-field">
+                                <input type="text" id="signup-lastname" placeholder="الاسم الأخير"
+                                    autocomplete="family-name" required aria-label="الاسم الأخير">
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="auth-field" id="signup-email-group">
+                            <i class="fa-solid fa-envelope auth-field-icon"></i>
+                            <input type="email" id="signup-email" placeholder="البريد الإلكتروني" autocomplete="email"
+                                required aria-label="البريد الإلكتروني">
+                        </div>
+
+                        <!-- Password -->
+                        <div class="auth-field">
+                            <i class="fa-solid fa-lock auth-field-icon"></i>
+                            <input type="password" id="signup-password" placeholder="كلمة المرور"
+                                autocomplete="new-password" required aria-label="كلمة المرور">
+                            <button type="button" class="auth-eye-btn" aria-label="إظهار/إخفاء كلمة المرور"
+                                data-target="signup-password">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+
+                        <!-- Live password requirements -->
+                        <ul id="pw-requirements" class="pw-reqs" aria-label="متطلبات كلمة المرور">
+                            <li data-rule="length"> <i class="fa-solid fa-circle-xmark"></i> 8 أحرف على الأقل</li>
+                            <li data-rule="upper"> <i class="fa-solid fa-circle-xmark"></i> حرف كبير (A-Z)</li>
+                            <li data-rule="number"> <i class="fa-solid fa-circle-xmark"></i> رقم (0-9)</li>
+                            <li data-rule="special"> <i class="fa-solid fa-circle-xmark"></i> رمز خاص (!@#…)</li>
+                        </ul>
+
+                        <!-- Confirm password -->
+                        <div class="auth-field">
+                            <i class="fa-solid fa-shield-halved auth-field-icon"></i>
+                            <input type="password" id="signup-confirm-password" placeholder="تأكيد كلمة المرور"
+                                autocomplete="new-password" required aria-label="تأكيد كلمة المرور">
+                            <button type="button" class="auth-eye-btn" aria-label="إظهار/إخفاء كلمة المرور"
+                                data-target="signup-confirm-password">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+
+                        <button type="submit" class="auth-btn" id="signup-submit-btn">
+                            <span class="btn-text"><i class="fa-solid fa-user-plus"></i> إنشاء الحساب</span>
+                            <span class="btn-spinner" aria-hidden="true"><i
+                                    class="fa-solid fa-circle-notch fa-spin"></i></span>
+                        </button>
+
+                    </form>
+
+                    <!-- Error box -->
+                    <div id="signup-error" class="auth-error-box" role="alert" aria-live="assertive"></div>
+
+                    <!-- Switch to login -->
+                    <p class="auth-switch">
+                        لديك حساب؟
+                        <button type="button" class="auth-switch-link" onclick="toggleAuthView('login')">
+                            تسجيل الدخول
+                        </button>
+                    </p>
+
+                </div><!-- /back -->
+
+            </div><!-- /auth-card-inner -->
+        </div><!-- /auth-card -->
+
+    </div><!-- /auth-modal -->
+
+
+
+    <!-- ════════════════════════════════════════════════════════════
+       LOADING OVERLAY
+       Full-screen spinner shown during async operations.
+       ════════════════════════════════════════════════════════════ -->
+    <div id="loading-overlay" class="modal-overlay" style="z-index:2000;" aria-hidden="true">
+        <div class="spinner" role="status" aria-label="جارٍ التحميل..."></div>
     </div>
 
-    <!-- Firebase SDKs -->
+
+    <!-- ════════════════════════════════════════════════════════════
+       TOAST NOTIFICATION CONTAINER
+       Toasts are dynamically appended here by ToastService.
+       ════════════════════════════════════════════════════════════ -->
+    <div id="toast-container" role="region" aria-label="الإشعارات" aria-live="polite">
+    </div>
+
+
+    <!-- ════════════════════════════════════════════════════════════
+       FIREBASE SDKs (Compat v9 — UMD builds)
+       Loaded before firebase-config.js and script.js.
+       ════════════════════════════════════════════════════════════ -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script>
 
-    <!-- Firebase Config -->
+    <!-- Firebase project configuration (replace with your own keys) -->
     <script src="firebase-config.js"></script>
 
-    <!-- Auth Modal -->
-    <div id="auth-modal" class="modal-overlay active"> <!-- Active by default to force login/signup -->
-        <div class="modal-content glass-panel" style="max-width: 400px; text-align: center;">
-            <div class="modal-header">
-                <h2 id="auth-title">تسجيل الدخول</h2>
-            </div>
-            <div class="modal-body">
-                <form id="auth-form">
-                    <div class="form-group">
-                        <label>البريد الإلكتروني</label>
-                        <input type="email" id="auth-email" placeholder="example@mail.com" required>
-                    </div>
-                    <div class="form-group">
-                        <label>كلمة المرور</label>
-                        <input type="password" id="auth-password" placeholder="********" required>
-                    </div>
-                    <button type="submit" class="btn-primary btn-block" id="auth-submit-btn">دخول</button>
-                </form>
-                <div class="auth-toggle">
-                    <p id="auth-toggle-text">ليس لديك حساب؟ <span id="toggle-auth-mode"
-                            style="color: var(--accent-glow); cursor: pointer; font-weight: bold;">إنشاء حساب
-                            جديد</span></p>
-                </div>
-                <div id="auth-error" style="color: #ef4444; margin-top: 10px; display: none;"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Loading Overlay -->
-    <div id="loading-overlay" class="modal-overlay" style="z-index: 2000;">
-        <div class="spinner"></div>
-    </div>
-
-    <!-- Toast Notification Container -->
-    <div id="toast-container"
-        style="position: fixed; bottom: 20px; right: 20px; z-index: 3000; display: flex; flex-direction: column; gap: 10px;">
-    </div>
-
+    <!-- Main application logic -->
     <script src="script.js"></script>
+
 </body>
 
 </html>
